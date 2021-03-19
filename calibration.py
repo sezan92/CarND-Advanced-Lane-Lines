@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def get_calibration_matrix(image, plot):
+def get_objectpoint_corner(image, plot):
     gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     object_point = np.zeros((6 * 9, 3), np.float32)
     object_point[:, :2] = np.mgrid[0:9, 0:6].T.reshape(-1, 2)
