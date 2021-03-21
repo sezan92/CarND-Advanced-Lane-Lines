@@ -11,14 +11,14 @@ class TestCalibration(unittest.TestCase):
         camera = Camera()
 
         img = util.imread("camera_cal/calibration1.jpg")
-        corners = camera.get_chessboard_corner(img, False)
+        corners = camera._get_chessboard_corner(img, False)
 
         assert corners is None
 
     def test_get_chessboard_corner2(self):
         camera = Camera()
         img = util.imread("camera_cal/calibration2.jpg")
-        corners = camera.get_chessboard_corner(img, False)
+        corners = camera._get_chessboard_corner(img, False)
 
         assert corners is not None
 
