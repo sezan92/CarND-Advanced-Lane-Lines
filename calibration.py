@@ -4,10 +4,11 @@ import numpy as np
 
 
 class Camera:
-    def __init__(self):
+    def __init__(self, img_size=(None, None)):
         """Camera Class """
         self.obj_points = []
         self.img_points = []
+        self.img_size = img_size
 
     def set_img_points(self, img, plot="False", save_fig=False, fig_name=None):
         """
@@ -22,23 +23,25 @@ class Camera:
             self.obj_points.append(obj_point)
             self.img_points.append(corners)
 
-    def get_calibration_matrix(self, img_size):
+    def get_calibration_matrix(self):
         """
-        tuple -> numpy.ndarray
-        Returns Calbration Matrix of given image_size
-        parameters:
-            img_size: (tuple), image shape
+
+        Returns Calbration Matrix of a given camera
         returns:
             calibration_matrix: numpy array, calibration matrix
         """
+        if len(self.obj_points) == 0:
+            raise "ERROR! Please add chessboard " + \
+                " image points using set_img_points method"
 
-        ret, cameraMatrix, distCoeffs, _, _ = cv2.calibrateCamera(
-            self.obj_points, self.img_points, img_size, None, None
+        ret, self.calib_matrix, self.dist_coeffs, _, _ = cv2.calibrateCamera(
+            self.obj_points, self.img_points, self.img_size, None, None
         )
         if not ret:
-            cameraMatrix = None
-            distCoeffs = None
-        return cameraMatrix, distCoeffs
+            self.calib_matrix = None
+            self.dist_coeffs = None
+
+        return self.calib_matrix, self.dist_coeffs
 
     def _get_chessboard_corner(self, img, plot=False, fig_name=None):
         """
