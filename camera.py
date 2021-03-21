@@ -9,6 +9,8 @@ class Camera:
         self.obj_points = []
         self.img_points = []
         self.img_size = img_size
+        self.calib_matrix = None
+        self.dist_coeffs = None
 
     def set_img_points(self, img, plot="False", save_fig=False, fig_name=None):
         """
@@ -31,8 +33,7 @@ class Camera:
             calibration_matrix: numpy array, calibration matrix
         """
         if len(self.obj_points) == 0:
-            raise "ERROR! Please add chessboard " + \
-                " image points using set_img_points method"
+            raise "ERROR! Please add chessboard " + " image points using set_img_points method"
 
         ret, self.calib_matrix, self.dist_coeffs, _, _ = cv2.calibrateCamera(
             self.obj_points, self.img_points, self.img_size, None, None
@@ -66,3 +67,21 @@ class Camera:
             return corners
         else:
             return None
+
+    def undistort(self, img):
+        """
+        numpy.ndarray -> numpy.ndarray
+        Returns undistorted image of a given image , using cameras
+        intrinsic properties
+        Parameters:
+            img: numpy.ndarray, Input img
+        Returns:
+            undistort: numpy.ndarray, undistorted image
+        """
+        if self.calib_matrix is None:
+            raise "Error! No calibration matrix!" + "Please calibrate the camera using the checkboard images!"
+        undistort = cv2.undistort(
+            img, self.calib_matrix, self.dist_coeffs, None, self.calib_matrix
+        )
+
+        return undistort

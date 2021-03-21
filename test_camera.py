@@ -3,7 +3,7 @@ import unittest
 import numpy
 
 import util
-from calibration import Camera
+from camera import Camera
 
 
 class TestCalibration(unittest.TestCase):
@@ -43,6 +43,14 @@ class TestCalibration(unittest.TestCase):
         camera.set_img_points(img)
         cameraMatrix, distCoeffs = camera.get_calibration_matrix()
         assert isinstance(cameraMatrix, numpy.ndarray)
+
+    def test_undistort(self):
+        camera = Camera((720, 1280))
+        img = util.imread("camera_cal/calibration2.jpg")
+        camera.set_img_points(img)
+        camera.get_calibration_matrix()
+        undistort = camera.undistort(img)
+        assert isinstance(undistort, numpy.ndarray)
 
 
 if __name__ == "__main__":
