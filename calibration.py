@@ -9,7 +9,7 @@ class Camera:
         self.obj_points = []
         self.img_points = []
 
-    def set_img_points(self, img):
+    def set_img_points(self, img, plot="False", save_fig=False, fig_name=None):
         """
         numpy.ndarray -> None
         Appends real world points and image points to self.obj_points
@@ -17,7 +17,7 @@ class Camera:
         """
         obj_point = np.zeros((6 * 9, 3), np.float32)
         obj_point[:, :2] = np.mgrid[0:9, 0:6].T.reshape(-1, 2)
-        corners = self.get_chessboard_corner(img)
+        corners = self._get_chessboard_corner(img, plot, fig_name)
         if corners is not None:
             self.obj_points.append(obj_point)
             self.img_points.append(corners)
@@ -40,15 +40,14 @@ class Camera:
             distCoeffs = None
         return cameraMatrix, distCoeffs
 
-    def get_chessboard_corner(self, img, plot=False):
+    def _get_chessboard_corner(self, img, plot=False, fig_name=None):
         """
         Returns chessboard corners
         parameters:
             img: numpy array, the image
             plot: boolean, to plot , or not to plot
         returns:
-            object points: numpy array
-            corners: #TODO
+            corners: numpy array, the corners
         """
         gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
         ret, corners = cv2.findChessboardCorners(gray, (9, 6), None)
@@ -58,6 +57,8 @@ class Camera:
             if plot:
                 plt.figure()
                 plt.imshow(image)
+                if fig_name is not None:
+                    plt.savefig(fig_name)
 
             return corners
         else:
