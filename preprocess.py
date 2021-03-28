@@ -13,7 +13,6 @@ class PerspectiveTransformer:
         cv2.setMouseCallback("original", self._click_event)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-        return self.pts
 
     def transform(self, img):
         pass
