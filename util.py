@@ -3,16 +3,23 @@ import os
 import cv2
 
 
-def imread(image_name):
+def imread(image_name, colorspace="RGB"):
     """
     Reads image and returns RGB numpy array
     Parameters:
         image_name: Image path , str
+        colorspace: RGB or BGR, str
     Returns:
         img: numpy array
     """
     img = cv2.imread(image_name)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    if colorspace == "RGB":
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    elif colorspace == "BGR":
+        pass
+    else:
+        raise "{} colorspcace not identified".format(colorspace)
+
     return img
 
 
