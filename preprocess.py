@@ -55,3 +55,15 @@ class PerspectiveTransformer:
             else:
                 print("got all points!")
                 print(self.pts)
+
+class BinaryTransformer:
+    def __init__(self, s=(0, 255), sx=(0, 255)):
+        self.s = s
+        self.sx = sx
+    
+    def tune(self, img, s1, s2, sx1, sx2, plot=False):
+        pass
+
+    def transform(self, img):
+        pass
+
