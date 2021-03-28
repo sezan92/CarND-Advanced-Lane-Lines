@@ -1,21 +1,48 @@
 import cv2
-
-import util
+import numpy as np
 
 
 class PerspectiveTransformer:
     def __init__(self):
         self.pts = []
+        self.threshold = 400
 
     def set_config(self, img):
+        """
+        Sets configuration for Perspective Transform
+        Args:
+            img: numpy.array , img for setting configuration
+
+        """
         self.img = img
         cv2.imshow("original", self.img)
         cv2.setMouseCallback("original", self._click_event)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
+        src = np.float32(self.pts)
+        self.pts = sorted(self.pts, key=lambda pt: pt[0])
+        self.H, self.W, _ = self.img.shape
+        dest = np.float32(
+            [
+                (self.threshold, 0),  # top left
+                (self.W - self.threshold, 0),  # top right
+                (self.threshold, self.H),  # bottom left
+                (self.W - self.threshold, self.H),
+            ]
+        )  # bottom right
+        self.M = cv2.getPerspectiveTransform(src, dest)
 
     def transform(self, img):
-        pass
+        """
+        Perspective Transformation
+        Ars:
+            img: numpy.array, image input
+        Returns:
+            img: numpy.array, transformed image
+        """
+        img = cv2.warpPerspective(img, self.M, (self.W, self.H), flags=cv2.INTER_LINEAR)
+
+        return img
 
     def _click_event(self, event, x, y, flags, param):
         if event == cv2.EVENT_LBUTTONDOWN:
