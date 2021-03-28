@@ -19,9 +19,8 @@ class PerspectiveTransformer:
         cv2.setMouseCallback("original", self._click_event)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-        src = np.float32(self.pts)
-        self.pts = sorted(self.pts, key=lambda pt: pt[0])
         self.H, self.W, _ = self.img.shape
+        src = np.float32(self.pts)
         dest = np.float32(
             [
                 (self.threshold, 0),  # top left
@@ -31,6 +30,7 @@ class PerspectiveTransformer:
             ]
         )  # bottom right
         self.M = cv2.getPerspectiveTransform(src, dest)
+        # TODO: sort the self.pts perfectly to destination
 
     def transform(self, img):
         """
