@@ -155,7 +155,7 @@ class BinaryTransformer:
         sx_values = []
         for img in imgs:
             self.tune(img)
-            s_values.append(self.sx_thresh)
+            s_values.append(self.s_thresh)
             sx_values.append(self.sx_thresh)
 
         self.s_thresh = self._get_mean_of_threshold(s_values)
