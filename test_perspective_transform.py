@@ -8,10 +8,10 @@ from preprocess import PerspectiveTransformer
 
 
 class TestPerspectiveTransformer(unittest.TestCase):
-    def test_set_config(self):
+    def test_tune(self):
         self.transformer = PerspectiveTransformer()
         img = util.imread("test_images/test2.jpg", "BGR")
-        self.transformer.set_config(img)
+        self.transformer.tune(img)
         assert len(self.transformer.pts) == 4
         assert isinstance(self.transformer.M, np.ndarray)
         img = util.imread("test_images/test1.jpg", "RGB")
