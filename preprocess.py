@@ -1,13 +1,24 @@
 import cv2
 import numpy as np
 
+class Transformer:
+    def __init__(self):
+        """
+        Base class for transofrmer
+        """
+        pass
+    def tune(self, img):
+        pass
+    def transform(self, img):
+        pass 
+
 
 class PerspectiveTransformer:
     def __init__(self):
         self.pts = []
         self.threshold = 400
 
-    def set_config(self, img):
+    def tune(self, img):
         """
         Sets configuration for Perspective Transform
         Args:
