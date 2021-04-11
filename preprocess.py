@@ -1,16 +1,19 @@
 import cv2
 import numpy as np
 
+
 class Transformer:
     def __init__(self):
         """
         Base class for transofrmer
         """
         pass
+
     def tune(self, img):
         pass
+
     def transform(self, img):
-        pass 
+        pass
 
 
 class PerspectiveTransformer:
