@@ -51,6 +51,7 @@ class PerspectiveTransformer(Transformer):
         )  # bottom right
         self.M = cv2.getPerspectiveTransform(src, dest)
         self.inverse_M = cv2.getPerspectiveTransform(dest, src)
+        # TODO: save inverse perspective transform matrix
         # TODO: sort the self.pts perfectly to destination
         np.save(cfg_name, self.M)
 
