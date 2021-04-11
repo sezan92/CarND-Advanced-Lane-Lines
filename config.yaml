@@ -1,0 +1,6 @@
+s_thresh: !!python/tuple
+- 108.75
+- 249.875
+sx_thresh: !!python/tuple
+- 85.75
+- 254.0
