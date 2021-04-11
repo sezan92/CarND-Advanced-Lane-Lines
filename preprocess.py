@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import yaml
 
 
 class Transformer:
@@ -15,17 +16,22 @@ class Transformer:
     def transform(self, img):
         pass
 
+    def load_config(self, cfg_name):
+        pass
 
-class PerspectiveTransformer:
+
+class PerspectiveTransformer(Transformer):
     def __init__(self):
+        super().__init__()
         self.pts = []
         self.threshold = 400
 
-    def tune(self, img):
+    def tune(self, img, cfg_name="config.npy"):
         """
         Sets configuration for Perspective Transform
         Args:
             img: numpy.array , img for setting configuration
+            cfg_name: str, name for saving the transform Matrix. default config.npy"
 
         """
         self.img = img
@@ -45,6 +51,15 @@ class PerspectiveTransformer:
         )  # bottom right
         self.M = cv2.getPerspectiveTransform(src, dest)
         # TODO: sort the self.pts perfectly to destination
+        np.save(cfg_name, self.M)
+
+    def load_config(self, cfg_name="config.npy"):
+        """
+        method to load configuration.
+        Arguments:
+            cfg_name: str, configuration filename, default config.npy
+        """
+        self.M = np.load(cfg_name)
 
     def transform(self, img):
         """
@@ -71,8 +86,9 @@ class PerspectiveTransformer:
                 print(self.pts)
 
 
-class BinaryTransformer:
+class BinaryTransformer(Transformer):
     def __init__(self, s_thresh=(None, None), sx_thresh=(None, None)):
+        super().__init__()
         self.s_thresh = s_thresh
         self.sx_thresh = sx_thresh
         self.tuning_title = "Tuning"
@@ -158,7 +174,7 @@ class BinaryTransformer:
 
         return mean_value
 
-    def tune_imgs(self, imgs):
+    def tune_imgs(self, imgs, cfg_name="config.yaml"):
         """
         Tunes a given directory and saves the average threshold values
         Arguments:
@@ -174,6 +190,22 @@ class BinaryTransformer:
 
         self.s_thresh = self._get_mean_of_threshold(s_values)
         self.sx_thresh = self._get_mean_of_threshold(sx_values)
+
+        cfg_dict = {"s_thresh": self.s_hresh, "sx_thresh": self.sx_thresh}
+
+        with open(cfg_name, "w") as cfgh:
+            yaml.dump(cfg_dict, cfgh)
+
+    def load_config(self, cfg_name):
+        """
+        Method to load configuration
+        Arguments:
+            cfg_name: str, name of the yaml configuration file
+        """
+        with open(cfg_name, "r") as cfgh:
+            cfg = yaml.load(cfgh)
+        self.s_thresh = cfg["s_thresh"]
+        self.sx_thresh = cfg["sx_thresh"]
 
     def transform(self, img):
 
