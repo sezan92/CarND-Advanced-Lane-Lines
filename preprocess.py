@@ -129,7 +129,7 @@ class BinaryTransformer(Transformer):
         hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
         l_channel = hls[:, :, 1]
         s_channel = hls[:, :, 2]
-        sobelx = cv2.Sobel(l_channel, cv2.CV_64F, 1, 0, ksize=3)
+        sobelx = cv2.Sobel(l_channel, cv2.CV_64F, 1, 0, ksize=7)
         abs_sobelx = np.absolute(sobelx)
         scaled_sobel = np.uint8(255 * abs_sobelx / np.max(abs_sobelx))
 
