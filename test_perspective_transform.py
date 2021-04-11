@@ -1,5 +1,5 @@
 import unittest
-
+import os
 import cv2
 import numpy as np
 
@@ -20,6 +20,9 @@ class TestPerspectiveTransformer(unittest.TestCase):
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         assert isinstance(img_transformed, np.ndarray)
+        assert os.path.exists("config.npy")
+        self.transformer.load_config("config.npy")
+        assert isinstance(self.transformer.M, np.ndarray)
 
 
 if __name__ == "__main__":
