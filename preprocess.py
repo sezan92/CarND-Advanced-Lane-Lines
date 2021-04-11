@@ -157,6 +157,8 @@ class BinaryTransformer(Transformer):
                 cv2.destroyAllWindows()
                 break
 
+        return bw
+
     def _get_mean_of_threshold(self, threshold_list):
         """
         Gets the mean of threshold list
