@@ -50,6 +50,7 @@ class PerspectiveTransformer(Transformer):
             ]
         )  # bottom right
         self.M = cv2.getPerspectiveTransform(src, dest)
+        self.inverse_M = cv2.getPerspectiveTransform(dest, src)
         # TODO: sort the self.pts perfectly to destination
         np.save(cfg_name, self.M)
 
@@ -70,6 +71,21 @@ class PerspectiveTransformer(Transformer):
             img: numpy.array, transformed image
         """
         img = cv2.warpPerspective(img, self.M, (self.W, self.H), flags=cv2.INTER_LINEAR)
+
+        return img
+
+    def inverse_transform(self, img_transformed):
+
+        """Inverse transformation.
+        Arguments:
+            img: numpy.array, image input
+        Returns:
+            img: numpy.array, inverse transformed
+        """
+
+        img = cv2.warpPerspective(
+            img_transformed, self.inverse_M, (self.W, self.H), flags=cv2.INTER_LINEAR
+        )
 
         return img
 
