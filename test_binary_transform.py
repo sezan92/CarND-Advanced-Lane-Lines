@@ -17,7 +17,7 @@ class TestBinaryTransformer(unittest.TestCase):
         bw = self.transformer.tune(img)
         assert isinstance(bw, np.ndarray)
 
-    def test_tune_dir(self):
+    def test_tune_imgs(self):
         self.transformer = BinaryTransformer()
         dir = "test_images"
         imgs = util.load_img_from_dir(dir)
