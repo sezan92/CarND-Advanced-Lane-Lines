@@ -193,7 +193,7 @@ class BinaryTransformer(Transformer):
         self.s_thresh = self._get_mean_of_threshold(s_values)
         self.sx_thresh = self._get_mean_of_threshold(sx_values)
 
-        cfg_dict = {"s_thresh": self.s_hresh, "sx_thresh": self.sx_thresh}
+        cfg_dict = {"s_thresh": self.s_thresh, "sx_thresh": self.sx_thresh}
 
         with open(cfg_name, "w") as cfgh:
             yaml.dump(cfg_dict, cfgh)
