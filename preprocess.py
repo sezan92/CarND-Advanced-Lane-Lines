@@ -130,7 +130,7 @@ class BinaryTransformer(Transformer):
         l_channel = hls[:, :, 1]
         s_channel = hls[:, :, 2]
         sobelx = cv2.Sobel(l_channel, cv2.CV_64F, 1, 0, ksize=7)
-        sobely = cv2.Sobel(l_channel, cv2.CV_64F, 0, 1, ksize=7)
+        sobely = cv2.Sobel(l_channel, cv2.CV_64F, 0, 1, ksize=3)
         abs_sobelx = cv2.convertScaleAbs(sobelx)
         abs_sobely = cv2.convertScaleAbs(sobely)
         scaled_sobelx = np.uint8(255 * abs_sobelx / np.max(abs_sobelx))
