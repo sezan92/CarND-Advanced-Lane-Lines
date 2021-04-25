@@ -34,7 +34,7 @@ class PerspectiveTransformer(Transformer):
             cfg_name: str, name for saving the transform Matrix. default config.npy"
 
         """
-        self.img = img
+        self.img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         cv2.imshow("original", self.img)
         cv2.setMouseCallback("original", self._click_event)
         cv2.waitKey(0)
@@ -135,12 +135,13 @@ class BinaryTransformer(Transformer):
         abs_sobely = cv2.convertScaleAbs(sobely)
         scaled_sobelx = np.uint8(255 * abs_sobelx / np.max(abs_sobelx))
         scaled_sobely = np.uint8(255 * abs_sobely / np.max(abs_sobely))
-        
+
         scaled_sobel = cv2.addWeighted(abs_sobelx, 0.5, abs_sobely, 0.5, 0)
-            
+
         sobel_binary = np.zeros_like(scaled_sobel)
         sobel_binary[
-            (scaled_sobel >= self.sobel_thresh[0]) & (scaled_sobel <= self.sobel_thresh[1])
+            (scaled_sobel >= self.sobel_thresh[0])
+            & (scaled_sobel <= self.sobel_thresh[1])
         ] = 1
 
         s_binary = np.zeros_like(s_channel)
