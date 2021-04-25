@@ -23,13 +23,13 @@ class TestBinaryTransformer(unittest.TestCase):
         imgs = util.load_img_from_dir(dir)
         self.transformer.tune_imgs(imgs)
         assert isinstance(self.transformer.s_thresh, tuple)
-        assert isinstance(self.transformer.sx_thresh, tuple)
+        assert isinstance(self.transformer.sobel_thresh, tuple)
         assert os.path.exists("config.yaml")
         with open("config.yaml", "r") as cfgh:
             cfg = yaml.load(cfgh)
         assert isinstance(cfg, dict)
         assert "s_thresh" in cfg
-        assert "sx_thresh" in cfg
+        assert "sobel_thresh" in cfg
 
 
 if __name__ == "__main__":

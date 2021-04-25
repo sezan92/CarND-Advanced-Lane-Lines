@@ -104,10 +104,10 @@ class PerspectiveTransformer(Transformer):
 
 
 class BinaryTransformer(Transformer):
-    def __init__(self, s_thresh=(None, None), sx_thresh=(None, None)):
+    def __init__(self, s_thresh=(None, None), sobel_thresh=(None, None)):
         super().__init__()
         self.s_thresh = s_thresh
-        self.sx_thresh = sx_thresh
+        self.sobel_thresh = sobel_thresh
         self.tuning_title = "Tuning"
         self.trackbar_name = "b&w track"
 
@@ -121,8 +121,8 @@ class BinaryTransformer(Transformer):
             img: numpy array, input image
             s1: int, s channel lowest threshold
             s2: int, s channel highest threshold
-            sx1: int, sobel operator x axis lowest threshold
-            sx2: int, sobel operator x axis highest Threshold
+            sobel1: int, sobel operator x axis lowest threshold
+            sobel2: int, sobel operator x axis highest Threshold
         Returns:
             combined_binary: numpy array, binary image
         """
@@ -130,18 +130,23 @@ class BinaryTransformer(Transformer):
         l_channel = hls[:, :, 1]
         s_channel = hls[:, :, 2]
         sobelx = cv2.Sobel(l_channel, cv2.CV_64F, 1, 0, ksize=7)
-        abs_sobelx = np.absolute(sobelx)
-        scaled_sobel = np.uint8(255 * abs_sobelx / np.max(abs_sobelx))
-
-        sxbinary = np.zeros_like(scaled_sobel)
-        sxbinary[
-            (scaled_sobel >= self.sx_thresh[0]) & (scaled_sobel <= self.sx_thresh[1])
+        sobely = cv2.Sobel(l_channel, cv2.CV_64F, 0, 1, ksize=7)
+        abs_sobelx = cv2.convertScaleAbs(sobelx)
+        abs_sobely = cv2.convertScaleAbs(sobely)
+        scaled_sobelx = np.uint8(255 * abs_sobelx / np.max(abs_sobelx))
+        scaled_sobely = np.uint8(255 * abs_sobely / np.max(abs_sobely))
+        
+        scaled_sobel = cv2.addWeighted(abs_sobelx, 0.5, abs_sobely, 0.5, 0)
+            
+        sobel_binary = np.zeros_like(scaled_sobel)
+        sobel_binary[
+            (scaled_sobel >= self.sobel_thresh[0]) & (scaled_sobel <= self.sobel_thresh[1])
         ] = 1
 
         s_binary = np.zeros_like(s_channel)
         s_binary[(s_channel >= self.s_thresh[0]) & (s_channel <= self.s_thresh[1])] = 1
-        combined_binary = np.zeros_like(sxbinary)
-        combined_binary[(s_binary == 1) | (sxbinary == 1)] = 1
+        combined_binary = np.zeros_like(sobel_binary)
+        combined_binary[(s_binary == 1) | (sobel_binary == 1)] = 1
 
         return combined_binary
 
@@ -157,16 +162,16 @@ class BinaryTransformer(Transformer):
         cv2.namedWindow(self.tuning_title)
         cv2.createTrackbar("s1", self.tuning_title, 0, 255, self.__nothing__)
         cv2.createTrackbar("s2", self.tuning_title, 0, 255, self.__nothing__)
-        cv2.createTrackbar("sx1", self.tuning_title, 0, 255, self.__nothing__)
-        cv2.createTrackbar("sx2", self.tuning_title, 0, 255, self.__nothing__)
+        cv2.createTrackbar("sobel1", self.tuning_title, 0, 255, self.__nothing__)
+        cv2.createTrackbar("sobel2", self.tuning_title, 0, 255, self.__nothing__)
 
         while True:
             s1 = cv2.getTrackbarPos("s1", self.tuning_title)
             s2 = cv2.getTrackbarPos("s2", self.tuning_title)
-            sx1 = cv2.getTrackbarPos("sx1", self.tuning_title)
-            sx2 = cv2.getTrackbarPos("sx2", self.tuning_title)
+            sobel1 = cv2.getTrackbarPos("sobel1", self.tuning_title)
+            sobel2 = cv2.getTrackbarPos("sobel2", self.tuning_title)
             self.s_thresh = (s1, s2)
-            self.sx_thresh = (sx1, sx2)
+            self.sobel_thresh = (sobel1, sobel2)
             bw = self.r2b(img)
             cv2.imshow(self.tuning_title, bw * 255)
             k = cv2.waitKey(1) & 0xFF
@@ -205,12 +210,12 @@ class BinaryTransformer(Transformer):
         for img in imgs:
             self.tune(img)
             s_values.append(self.s_thresh)
-            sx_values.append(self.sx_thresh)
+            sx_values.append(self.sobel_thresh)
 
         self.s_thresh = self._get_mean_of_threshold(s_values)
-        self.sx_thresh = self._get_mean_of_threshold(sx_values)
+        self.sobel_thresh = self._get_mean_of_threshold(sx_values)
 
-        cfg_dict = {"s_thresh": self.s_thresh, "sx_thresh": self.sx_thresh}
+        cfg_dict = {"s_thresh": self.s_thresh, "sobel_thresh": self.sobel_thresh}
 
         with open(cfg_name, "w") as cfgh:
             yaml.dump(cfg_dict, cfgh)
@@ -224,7 +229,7 @@ class BinaryTransformer(Transformer):
         with open(cfg_name, "r") as cfgh:
             cfg = yaml.load(cfgh)
         self.s_thresh = cfg["s_thresh"]
-        self.sx_thresh = cfg["sx_thresh"]
+        self.sobel_thresh = cfg["sobel_thresh"]
 
     def transform(self, img):
 
