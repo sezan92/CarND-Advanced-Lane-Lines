@@ -1,3 +1,5 @@
+from collections import deque
+
 import cv2
 import numpy as np
 
@@ -96,7 +98,6 @@ def fit_polynomial(binary, nwindows=20, margin=60, minpix=25):
     leftx, lefty, rightx, righty, out_img = detect_lane(
         binary, nwindows, margin, minpix
     )
-
     left_fit = np.polyfit(lefty, leftx, 2)
     right_fit = np.polyfit(righty, rightx, 2)
 
@@ -143,3 +144,55 @@ def draw_lane(img, binary, left_fitx, right_fitx, ploty, pt):
     mask_color_previous = pt.inverse_transform(mask_color)
     img_lane = cv2.addWeighted(img, 1, mask_color_previous, 0.5, 0)
     return img_lane
+
+
+class Line:
+    def __init__(self):
+        # was the line detected in the last iteration?
+        self.detected = False
+        # x values of the last n fits of the line
+        self.recent_xfitted = []
+        # average x values of the fitted line over the last n iterations
+        self.bestx = None
+        # polynomial coefficients averaged over the last n iterations
+        self.best_fit = None
+
+        # radius of curvature of the line in some units
+        self.radius_of_curvature = None
+        # distance in meters of vehicle center from the line
+        self.line_base_pos = None
+        # difference in fit coefficients between last and new fits
+        self.diffs = np.array([0, 0, 0], dtype="float")
+        # x values for detected line pixels
+        self.allx = None
+        # y values for detected line pixels
+        self.ally = None
+
+        # recent number of values
+        self.n = 15
+        # polynomial coefficients for the most recent fit
+        self.current_fit = deque(maxlen=self.n)
+
+    def fit(self, fit):
+        if self.best_fit is not None:
+            self.diffs = fit - self.best_fit
+            if (
+                abs(self.diffs[0]) > 0.001
+                or abs(self.diffs[1]) > 1.0
+                or abs(self.diffs[2]) > 100
+            ):
+                self.detected = False
+            else:
+                self.current_fit.append(fit)
+                self.best_fit = np.average(self.current_fit, axis=0)
+                self.detected = True
+        else:
+            self.best_fit = fit
+            self.current_fit.append(fit)
+            self.detected = True
+
+    def get_fitx(self, ploty):
+        best_fitx = (
+            self.best_fit[0] * ploty ** 2 + self.best_fit[1] * ploty + self.best_fit[2]
+        )
+        return best_fitx
