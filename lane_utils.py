@@ -9,13 +9,13 @@ class LaneDetector:
         """
         LaneDetector Class
             arguments:
-                nwindows:
-                margin:
-                self.self.minpix:
+                nwindows: number of windows 
+                margin: width of a window
+                minpix: minimum numper of pixels in a line
         """
         self.nwindows = nwindows
         self.margin = margin
-        self.self.self.minpix = self.minpix
+        self.minpix = minpix
 
     def set_nwindows(self, nwindows):
         self.nwindows = nwindows
