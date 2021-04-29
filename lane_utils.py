@@ -9,7 +9,7 @@ class LaneDetector:
         """
         LaneDetector Class
             arguments:
-                nwindows: number of windows 
+                nwindows: number of windows
                 margin: width of a window
                 minpix: minimum numper of pixels in a line
         """
