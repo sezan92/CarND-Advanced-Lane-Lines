@@ -96,7 +96,7 @@ def measure_curvature_pos(ploty, left_fitx, right_fitx, binary):
         right_fitx: list, x indices for fitting for right line
     Return:
         left_curverad: float, left curve radius
-        right_curverad: flaot, right curve radius
+        right_curverad: float, right curve radius
         vehicle_position: float, vehicle position compared to the left curve
     """
     xm_per_pix = 3.7 / 550
