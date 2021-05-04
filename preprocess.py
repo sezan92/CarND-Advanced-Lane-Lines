@@ -21,12 +21,13 @@ class Transformer:
 
 
 class PerspectiveTransformer(Transformer):
-    def __init__(self):
+    def __init__(self, img_shape, threshold=400):
         super().__init__()
         self.pts = []
-        self.threshold = 400
+        self.threshold = threshold
+        self.H, self.W, _ = img_shape
 
-    def tune(self, img, cfg_name="config.npy"):
+    def tune(self, img, cfg_name="pt_config.npy"):
         """
         Sets configuration for Perspective Transform
         Args:
@@ -39,7 +40,6 @@ class PerspectiveTransformer(Transformer):
         cv2.setMouseCallback("original", self._click_event)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-        self.H, self.W, _ = self.img.shape
         src = np.float32(self.pts)
         dest = np.float32(
             [
@@ -55,7 +55,7 @@ class PerspectiveTransformer(Transformer):
         # TODO: sort the self.pts perfectly to destination
         np.save(cfg_name, self.M)
 
-    def load_config(self, cfg_name="config.npy"):
+    def load_config(self, cfg_name="pt_config.npy"):
         """
         method to load configuration.
         Arguments:
