@@ -125,3 +125,67 @@ def measure_curvature_pos(ploty, left_fitx, right_fitx, binary):
     vehicle_position = lane_mid_point - vehicle_mid_point
 
     return left_curverad, right_curverad, vehicle_position
+
+
+def prior_search(binary, left_fit, right_fit, margin=50):
+    """
+    searches within the margin of previous left and right fit indices
+    Parameters:
+        binary: np.ndarray, binary image from the video
+        left_fit: list, left line curve fitting coefficients
+        right_fit: list, right line curve fitting coefficients
+        margin: int, margin to search lane for
+    Returns:
+        left_fitx: list, left line x indices
+        right_fitx: list, right line x indices
+        ploty: y indices for curve fitting
+        left_fit: list, left line curve fitting coefficients
+        right_fit: list, right line curve fitting coefficients
+    """
+    nonzero = binary.nonzero()
+    nonzeroy = np.array(nonzero[0])
+    nonzerox = np.array(nonzero[1])
+    left_lane_indices = (
+        nonzerox
+        > (
+            left_fit[0] * (nonzeroy ** 2)
+            + left_fit[1] * nonzeroy
+            + left_fit[2]
+            - margin
+        )
+    ) & (
+        nonzerox
+        < (
+            left_fit[0] * (nonzeroy ** 2)
+            + left_fit[1] * nonzeroy
+            + left_fit[2]
+            + margin
+        )
+    )
+    right_lane_indices = (
+        nonzerox
+        > (
+            right_fit[0] * (nonzeroy ** 2)
+            + right_fit[1] * nonzeroy
+            + right_fit[2]
+            - margin
+        )
+    ) & (
+        nonzerox
+        < (
+            right_fit[0] * (nonzeroy ** 2)
+            + right_fit[1] * nonzeroy
+            + right_fit[2]
+            + margin
+        )
+    )
+    leftx = nonzerox[left_lane_indices]
+    lefty = nonzeroy[left_lane_indices]
+    rightx = nonzerox[right_lane_indices]
+    righty = nonzeroy[right_lane_indices]
+    left_fit = np.polyfit(lefty, leftx, 2)
+    right_fit = np.polyfit(righty, rightx, 2)
+    ploty = np.linspace(0, binary.shape[0] - 1, binary.shape[0])
+    left_fitx = left_fit[0] * ploty ** 2 + left_fit[1] * ploty + left_fit[2]
+    right_fitx = right_fit[0] * ploty ** 2 + right_fit[1] * ploty + right_fit[2]
+    return left_fitx, right_fitx, ploty, left_fit, right_fit
