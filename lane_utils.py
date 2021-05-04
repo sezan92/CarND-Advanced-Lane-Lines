@@ -80,9 +80,9 @@ class LaneDetector:
             left_lane_inds.append(good_left_inds)
             right_lane_inds.append(good_right_inds)
 
-            if len(good_left_inds) > self.self.minpix:
+            if len(good_left_inds) > self.minpix:
                 leftx_current = np.int(np.mean(nonzerox[good_left_inds]))
-            if len(good_right_inds) > self.self.minpix:
+            if len(good_right_inds) > self.minpix:
                 rightx_current = np.int(np.mean(nonzerox[good_right_inds]))
 
         left_lane_inds = np.concatenate(left_lane_inds)
@@ -106,7 +106,7 @@ class LaneDetector:
 
         return leftx, lefty, rightx, righty, out_img
 
-    def fit_polynomial(self, binary):
+    def fit(self, binary):
         leftx, lefty, rightx, righty, out_img = self.detect_lane(binary)
         left_fit = np.polyfit(lefty, leftx, 2)
         right_fit = np.polyfit(righty, rightx, 2)

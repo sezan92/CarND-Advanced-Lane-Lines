@@ -1,5 +1,6 @@
-import unittest
 import os
+import unittest
+
 import cv2
 import numpy as np
 
