@@ -1,4 +1,3 @@
-import os
 import unittest
 
 from lane_utils import LaneDetector

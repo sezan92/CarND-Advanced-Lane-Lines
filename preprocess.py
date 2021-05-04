@@ -136,7 +136,7 @@ class BinaryTransformer(Transformer):
         scaled_sobelx = np.uint8(255 * abs_sobelx / np.max(abs_sobelx))
         scaled_sobely = np.uint8(255 * abs_sobely / np.max(abs_sobely))
 
-        scaled_sobel = cv2.addWeighted(abs_sobelx, 0.5, abs_sobely, 0.5, 0)
+        scaled_sobel = cv2.addWeighted(scaled_sobelx, 0.5, scaled_sobely, 0.5, 0)
 
         sobel_binary = np.zeros_like(scaled_sobel)
         sobel_binary[

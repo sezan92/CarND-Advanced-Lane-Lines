@@ -1,6 +1,5 @@
 from collections import deque
 
-import cv2
 import numpy as np
 
 
@@ -123,7 +122,6 @@ class LaneDetector:
             right_fitx = 1 * ploty ** 2 + 1 * ploty
 
         return out_img, left_fitx, right_fitx, ploty, left_fit, right_fit
-
 
 
 class Line:
