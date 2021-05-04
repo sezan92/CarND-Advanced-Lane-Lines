@@ -189,3 +189,19 @@ def prior_search(binary, left_fit, right_fit, margin=50):
     left_fitx = left_fit[0] * ploty ** 2 + left_fit[1] * ploty + left_fit[2]
     right_fitx = right_fit[0] * ploty ** 2 + right_fit[1] * ploty + right_fit[2]
     return left_fitx, right_fitx, ploty, left_fit, right_fit
+
+
+def preprocess_frame(frame, transformers=[]):
+    """
+    preprocesses a video frame according to transformers
+    arguments:
+        frame: np.ndarray, frame to preprocess
+        transformers: list, list of transformers to preprocess
+    return:
+        frame: np.ndarray, transformed frame
+    """
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    for transformer in transformers:
+        frame = transformer.transform(frame)
+    return frame
