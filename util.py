@@ -85,3 +85,43 @@ def draw_lane(img, binary, left_fitx, right_fitx, ploty, pt):
     mask_color_previous = pt.inverse_transform(mask_color)
     img_lane = cv2.addWeighted(img, 1, mask_color_previous, 0.5, 0)
     return img_lane
+
+
+def measure_curvature_pos(ploty, left_fitx, right_fitx, binary):
+    """
+    Measures curvature position and radius based on given parameters
+    Parameters:
+        ploty: list, y indices for fitting
+        left_fitx: list, x indices for fitting for left line
+        right_fitx: list, x indices for fitting for right line
+    Return:
+        left_curverad: float, left curve radius
+        right_curverad: flaot, right curve radius
+        vehicle_position: float, vehicle position compared to the left curve
+    """
+    xm_per_pix = 3.7 / 550
+    ym_per_pix = 3.1 / 720
+
+    left_fit = np.polyfit(ploty * ym_per_pix, left_fitx * xm_per_pix, 2)
+    right_fit = np.polyfit(ploty * ym_per_pix, right_fitx * xm_per_pix, 2)
+
+    y_eval = np.max(ploty)
+
+    left_curverad = (
+        (1 + (2 * left_fit[0] * y_eval * ym_per_pix + left_fit[1]) ** 2) ** 1.5
+    ) / np.absolute(2 * left_fit[0])
+    right_curverad = (
+        (1 + (2 * right_fit[0] * y_eval * ym_per_pix + right_fit[1]) ** 2) ** 1.5
+    ) / np.absolute(2 * right_fit[0])
+
+    H, W = binary.shape
+    H = H * ym_per_pix
+    left_lane_intercept = left_fit[0] * H ** 2 + left_fit[1] * H + left_fit[2]
+    right_lane_intercept = right_fit[0] * H ** 2 + right_fit[1] * H + right_fit[2]
+
+    lane_mid_point = (left_lane_intercept + right_lane_intercept) / 2
+
+    vehicle_mid_point = W / 2 * xm_per_pix
+    vehicle_position = lane_mid_point - vehicle_mid_point
+
+    return left_curverad, right_curverad, vehicle_position
