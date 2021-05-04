@@ -25,7 +25,7 @@ class PerspectiveTransformer(Transformer):
         super().__init__()
         self.pts = []
         self.threshold = threshold
-        self.H, self.W, _ = img_shape
+        self.H, self.W = img_shape
 
     def tune(self, img, cfg_name="pt_config.npy"):
         """
