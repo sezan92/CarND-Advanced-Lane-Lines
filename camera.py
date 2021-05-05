@@ -1,3 +1,4 @@
+import argparse
 import logging
 import os
 
@@ -6,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 
-from util import load_img_dir
+from util import imread, load_img_from_dir
 
 
 class Camera:
@@ -53,7 +54,7 @@ class Camera:
             cfg_filename: str, confirutration filename
 
         """
-        imgs = load_img_dir(img_dir)
+        imgs = load_img_from_dir(img_dir)
 
         for i, img in enumerate(imgs):
             if camera_cal_output_dir is not None:
@@ -137,3 +138,55 @@ class Camera:
         )
 
         return undistort
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--cal_img_dir", type=str, help="camera calibraion chessboard image directory"
+    )
+    parser.add_argument(
+        "--calibrtion_output_dir",
+        type=str,
+        default="camera_cal_result",
+        help="camera calibration output directory, default: camera_cal_result",
+    )
+    parser.add_argument(
+        "--input_img",
+        type=str,
+        default=None,
+        help="input image to undistort, default: None.",
+    )
+    parser.add_argument(
+        "--output_dir",
+        type=str,
+        default=None,
+        help="output directory to save undistorted images, default: output_result",
+    )
+    parser.add_argument(
+        "--cfg_filename",
+        type=str,
+        default="camera_config.yaml",
+        help="configuration yaml file for camera. default: camera_config.yaml",
+    )
+    args = parser.parse_args()
+    H = 720
+    W = 1280
+    IMG_SIZE = (H, W)
+    camera_cal_img_dir = args.cal_img_dir
+    calibration_output_dir = args.calibration_output_dir
+    output_dir = args.output_dir
+    cfg_filename = args.cfg_filename
+    input_img_name = args.input_img
+    os.makedirs(calibration_output_dir, exist_ok=True)
+
+    camera = Camera(IMG_SIZE)
+    camera.tune(camera_cal_img_dir, cfg_filename, calibration_output_dir)
+
+    if input_img_name is not None:
+        img = imread(input_img_name)
+        img = camera.transform(img)
+        plt.imshow(img)
+        if output_dir is not None:
+            os.makedirs(output_dir, exist_ok=True)
+            cv2.imwrite(os.path.join(output_dir, "undistorted_test_image.jpg"), img)
