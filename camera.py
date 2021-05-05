@@ -1,13 +1,13 @@
-import argparse
 import logging
 import os
+import argparse
 
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 
-from util import imread, load_img_from_dir
+from util import load_img_from_dir, imread
 
 
 class Camera:
@@ -146,7 +146,7 @@ if __name__ == "__main__":
         "--cal_img_dir", type=str, help="camera calibraion chessboard image directory"
     )
     parser.add_argument(
-        "--calibrtion_output_dir",
+        "--calibration_output_dir",
         type=str,
         default="camera_cal_result",
         help="camera calibration output directory, default: camera_cal_result",
