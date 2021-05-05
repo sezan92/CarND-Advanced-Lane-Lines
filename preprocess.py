@@ -1,3 +1,5 @@
+import logging
+
 import cv2
 import numpy as np
 import yaml
@@ -27,7 +29,7 @@ class PerspectiveTransformer(Transformer):
         self.threshold = threshold
         self.H, self.W = img_shape
 
-    def tune(self, img, cfg_name="pt_config.npy"):
+    def tune(self, img, cfg_name="pt_config.yaml"):
         """
         Sets configuration for Perspective Transform
         Args:
@@ -53,15 +55,22 @@ class PerspectiveTransformer(Transformer):
         self.inverse_M = cv2.getPerspectiveTransform(dest, src)
         # TODO: save inverse perspective transform matrix
         # TODO: sort the self.pts perfectly to destination
-        np.save(cfg_name, self.M)
+        cfg = {"M": self.M.tolist(), "inverse_M": self.inverse_M.tolist()}
+        with open(cfg_name, "w") as cfgh:
+            yaml.dump(cfg, cfgh)
+        logging.info(f"saved configuration in {cfg_name}")
 
-    def load_config(self, cfg_name="pt_config.npy"):
+    def load_config(self, cfg_name="pt_config.yaml"):
         """
         method to load configuration.
         Arguments:
             cfg_name: str, configuration filename, default config.npy
         """
-        self.M = np.load(cfg_name)
+        with open(cfg_name, "r") as cfgh:
+            cfg = yaml.load(cfgh)
+
+            self.M = np.array(cfg["M"])
+            self.inverse_M = np.array(cfg["inverse_M"])
 
     def transform(self, img):
         """
@@ -133,10 +142,8 @@ class BinaryTransformer(Transformer):
         sobely = cv2.Sobel(l_channel, cv2.CV_64F, 0, 1, ksize=3)
         abs_sobelx = cv2.convertScaleAbs(sobelx)
         abs_sobely = cv2.convertScaleAbs(sobely)
-        scaled_sobelx = np.uint8(255 * abs_sobelx / np.max(abs_sobelx))
-        scaled_sobely = np.uint8(255 * abs_sobely / np.max(abs_sobely))
 
-        scaled_sobel = cv2.addWeighted(scaled_sobelx, 0.5, scaled_sobely, 0.5, 0)
+        scaled_sobel = cv2.addWeighted(abs_sobelx, 0.5, abs_sobely, 0.5, 0)
 
         sobel_binary = np.zeros_like(scaled_sobel)
         sobel_binary[
