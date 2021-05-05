@@ -4,6 +4,7 @@ import os
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+import yaml
 
 from util import load_img_dir
 
@@ -78,7 +79,7 @@ class Camera:
             "dist_coeffs": self.dist_coeffs.tolist(),
         }
         with open(cfg_filename, "w") as cfgh:
-            cfgh.dump(cfg, cfgh)
+            yaml.dump(cfg, cfgh)
         logging.info(f"saved calibration matrix in {cfg_filename}")
 
     def _get_chessboard_corner(self, img, plot=False, fig_name=None):
@@ -104,6 +105,20 @@ class Camera:
             return corners
         else:
             return None
+
+    def load_config(self, cfg_filename):
+        """
+        loads camera configuration from given filename
+        parameters:
+            cfg_filename: str, filename of the configuration file
+        returns:
+            None
+        """
+        with open(cfg_filename, "r") as cfgh:
+            cfg = yaml.safe_load(cfgh)
+        self.calib_matrix = np.array(cfg["calib_matrix"])
+        self.dist_coeffs = np.array(cfg["dist_coeffs"])
+        logging.info(f"loaded configurations from {cfg_filename}")
 
     def transform(self, img):
         """
