@@ -68,7 +68,7 @@ class Camera:
         else:
             return None
 
-    def undistort(self, img):
+    def transform(self, img):
         """
         numpy.ndarray -> numpy.ndarray
         Returns undistorted image of a given image , using cameras

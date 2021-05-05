@@ -107,9 +107,15 @@ class LaneDetector:
 
     def fit(self, binary):
         leftx, lefty, rightx, righty, out_img = self.detect_lane(binary)
-        left_fit = np.polyfit(lefty, leftx, 2)
-        right_fit = np.polyfit(righty, rightx, 2)
+        try:
+            left_fit = np.polyfit(lefty, leftx, 2)
+            right_fit = np.polyfit(righty, rightx, 2)
+        except TypeError:
+            import matplotlib.pyplot as plt
 
+            plt.imshow(binary, cmap="gray")
+            print(rightx, righty)
+            raise TypeError
         out_img[lefty, leftx] = [255, 0, 0]
         out_img[righty, rightx] = [0, 0, 255]
 
