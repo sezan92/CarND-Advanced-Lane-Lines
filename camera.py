@@ -79,7 +79,7 @@ class Camera:
         }
         with open(cfg_filename, "w") as cfgh:
             cfgh.dump(cfg, cfgh)
-            logging.info(f"saved calibration matrix in {cfg_filename}")
+        logging.info(f"saved calibration matrix in {cfg_filename}")
 
     def _get_chessboard_corner(self, img, plot=False, fig_name=None):
         """
