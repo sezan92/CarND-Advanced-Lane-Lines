@@ -1,6 +1,11 @@
+import logging
+import os
+
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+
+from util import load_img_dir
 
 
 class Camera:
@@ -12,11 +17,15 @@ class Camera:
         self.calib_matrix = None
         self.dist_coeffs = None
 
-    def set_img_points(self, img, plot="False", save_fig=False, fig_name=None):
+    def set_img_points(self, img, plot="False", fig_name=None):
         """
         numpy.ndarray -> None
         Appends real world points and image points to self.obj_points
         and self.img_points respectively
+        parameters:
+            img: np.ndarray, image to get the chessboard corners
+            plot: bool, to plot, or not to plot
+            fig_name: str, figure name
         """
         obj_point = np.zeros((6 * 9, 3), np.float32)
         obj_point[:, :2] = np.mgrid[0:9, 0:6].T.reshape(-1, 2)
@@ -31,7 +40,30 @@ class Camera:
         Returns Calbration Matrix of a given camera
         returns:
             calibration_matrix: numpy array, calibration matrix
+            dist_coeffs: numpy array, dist coeffecients
         """
+        return self.calib_matrix, self.dist_coeffs
+
+    def tune(self, img_dir, cfg_filename="camera.yaml", camera_cal_output_dir=None):
+        """
+        Tunes camera configuration based on the given image dir
+        parameters:
+            img_dir: str, directory of images intended to be used
+            cfg_filename: str, confirutration filename
+
+        """
+        imgs = load_img_dir(img_dir)
+
+        for i, img in enumerate(imgs):
+            if camera_cal_output_dir is not None:
+                fig_name = os.path.join(camera_cal_output_dir, f"{i}.jpg")
+            else:
+                fig_name = None
+            self.set_img_points(
+                img,
+                plot=True,
+                fig_name=fig_name,
+            )
         if len(self.obj_points) == 0:
             raise "ERROR! Please add chessboard " + " image points using set_img_points method"
 
@@ -41,8 +73,13 @@ class Camera:
         if not ret:
             self.calib_matrix = None
             self.dist_coeffs = None
-
-        return self.calib_matrix, self.dist_coeffs
+        cfg = {
+            "calib_matrix": self.calib_matrix.tolist(),
+            "dist_coeffs": self.dist_coeffs.tolist(),
+        }
+        with open(cfg_filename, "w") as cfgh:
+            cfgh.dump(cfg, cfgh)
+            logging.info(f"saved calibration matrix in {cfg_filename}")
 
     def _get_chessboard_corner(self, img, plot=False, fig_name=None):
         """
