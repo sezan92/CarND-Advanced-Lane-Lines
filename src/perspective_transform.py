@@ -27,14 +27,14 @@ if __name__ == "__main__":
         default="camera_config.yaml",
     )
     parser.add_argument(
-        "--thershold",
+        "--threshold",
         type=int,
         help="threshold for perspective transform . Depents on the image shape. Default:400",
         default=400,
     )
     parser.add_argument(
         "--plot",
-        type=bool,
+        action="store_true",
         help="to plot or not to plot. Default: False",
         default=False,
     )
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     pt.tune(img, cfg_name=args.cfg_filename)
     if args.plot:
         img_transformed = pt.transform(img)
-        img_transformed = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        img_transformed = cv2.cvtColor(img_transformed, cv2.COLOR_RGB2BGR)
         cv2.imshow("transformed image", img_transformed)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
