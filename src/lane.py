@@ -111,11 +111,15 @@ class LaneDetector:
             left_fit = np.polyfit(lefty, leftx, 2)
             right_fit = np.polyfit(righty, rightx, 2)
         except TypeError:
-            import matplotlib.pyplot as plt
+            left_fit = self.previous_left_fit
+            right_fit = self.previous_right_fit
+            import cv2
 
-            plt.imshow(binary, cmap="gray")
+            cv2.imshow("problem binary frame", binary * 255)
+            cv2.waitKey(1)
+            cv2.destroyAllWindows()
             print(rightx, righty)
-            raise TypeError
+
         out_img[lefty, leftx] = [255, 0, 0]
         out_img[righty, rightx] = [0, 0, 255]
 
@@ -126,7 +130,12 @@ class LaneDetector:
         except TypeError:
             left_fitx = 1 * ploty ** 2 + 1 * ploty
             right_fitx = 1 * ploty ** 2 + 1 * ploty
-
+        self.previous_left_fit = left_fit
+        self.previous_right_fit = right_fit
+        self.previous_leftx = leftx
+        self.previous_lefty = lefty
+        self.previous_rightx = rightx
+        self.previous_righty = righty
         return out_img, left_fitx, right_fitx, ploty, left_fit, right_fit
 
 
@@ -161,7 +170,7 @@ class Line:
         if self.best_fit is not None:
             self.diffs = fit - self.best_fit
             if (
-                abs(self.diffs[0]) > 0.001
+                abs(self.diffs[0]) > 0.01
                 or abs(self.diffs[1]) > 1.0
                 or abs(self.diffs[2]) > 100
             ):
