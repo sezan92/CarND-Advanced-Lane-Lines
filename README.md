@@ -69,6 +69,7 @@ It will save the output images in `test_images/lane_detected` folder
 python src/lane_detection.py --input project_video.mp4 --camera_cfg_filename config/camera_config.yaml --pt_cfg_filename config/pt_config.yaml --binary_cfg_filename config/camera_config.yaml --img_size 720 1280
 
 ```
+[Video Link](https://youtu.be/NudXllMCQsQ)
 
 It will save the output video as `project_video_output.avi` .
 
