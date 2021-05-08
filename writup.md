@@ -33,7 +33,7 @@ The goals / steps of this project are the following:
 
 #### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
 
-The code for this step is contained in the third code cell of the IPython notebook located in "Project.ipynb" 
+The code for this step is the `src/camera.py` script. I have wrote a class named `Camera` which does the necessary works. 
 
 I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
 
@@ -50,33 +50,22 @@ To demonstrate this step, I will describe how I apply the distortion correction 
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at cell 26 of the notebook "Project.ipynb").  Here's an example of my output for this step. 
+I used a combination of color and gradient thresholds to generate a binary image (thresholding steps are shown in `src/preprocess.py`) script. I have created a `BinaryTransformer` class (114-189). The process is done in `r2b` method.  Here's an example of my output for this step. 
 
 ![alt text](result/binary.jpg)
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
-The code for my perspective transform includes a function called `perspective_transform()`, in the 18th code cell of the IPython notebook `Project.ipynb`.  The `perspective_transform` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
+The perspective transform process is done in `PerspectiveTransformer` class in `src/preprocess.py` script (25-111). I have written the script in such a way that I can select the src points manually. It is done `tune` method (32-60)
 
 ```python
-src = np.float32([(575,480),
-                  (750,480), 
-                  (300,700), 
-                  (1100,700)])
+
 dst = np.float32([(400,0), #top left
                   (W-400,0), #top right
                   (400,H), #bottom left
                   (W-400,H)]) #bottom right
+
 ```
-
-This resulted in the following source and destination points:
-
-| Source        | Destination   | 
-|:-------------:|:-------------:| 
-| 575, 480      | 400, 0        | 
-| 300, 700      | 400, 700      |
-| 1100, 700     | 800, 700      |
-| 750, 480      | 800, 0        |
 
 I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
 
@@ -90,11 +79,11 @@ Then I converted the image into binary, detected lanes using histogram gradients
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-I did this in the cell 44 of the `Project.ipynb`.
+I did this in the `measure_curvature_pos` function in `src/util.py` script (90-127)
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-I implemented this step in the cell 42 of `Project.ipynb` named as `draw_lane`.  Here is an example of my result on a test image:
+I implmented this step in `draw_lane` function in `util.py` script (47-87).  Here is an example of my result on a test image:
 
 ![alt text](result/image_lane.jpg)
 
@@ -104,12 +93,11 @@ I implemented this step in the cell 42 of `Project.ipynb` named as `draw_lane`. 
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
-Here's a [link to my video result](./project_output.avi)
+Here's a [link to my video result](https://youtu.be/NudXllMCQsQ)
 
 ---
 
 ### Discussion
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
-The problem I faced with this project is, whenever a black car passes by, the lane distorts towards that black car. Possibly because of gradient based binary method. More tuning is needed. Not to mention use of Convolutional Neural network is needed
-!
+The problem I faced was the sudden change in color contrast due to sudden arrival of shadows . This can means that these processes are lighting conditions specific. To make it more robust , i believe more data are needed to get proper configurations for binary images . 
