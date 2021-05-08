@@ -62,7 +62,7 @@ def detect_lane_video(video_name, ld, transformers):
         right_line.fit(right_fit)
         left_best_fitx = left_line.get_fitx(ploty)
         right_best_fitx = right_line.get_fitx(ploty)
-        if abs(abs(left_fitx[-1] - right_fitx[-1])) < 100:
+        if abs(abs(left_best_fitx[-1] - right_best_fitx[-1])) < 100:
             left_line.detected = False
             right_line.detected = False
 
