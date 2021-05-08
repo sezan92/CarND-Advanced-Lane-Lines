@@ -116,7 +116,7 @@ class Camera:
             None
         """
         with open(cfg_filename, "r") as cfgh:
-            cfg = yaml.safe_load(cfgh)
+            cfg = yaml.load(cfgh)
         self.calib_matrix = np.array(cfg["calib_matrix"])
         self.dist_coeffs = np.array(cfg["dist_coeffs"])
         logging.info(f"loaded configurations from {cfg_filename}")
