@@ -1,13 +1,13 @@
+import argparse
 import logging
 import os
-import argparse
 
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 
-from util import load_img_from_dir, imread
+from util import imread, load_img_from_dir
 
 
 class Camera:
