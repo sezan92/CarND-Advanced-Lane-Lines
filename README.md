@@ -50,7 +50,7 @@ more argument:
 
 ```
 
-#### 4. Lane Detection
+### 4. Lane Detection
 
 After getting all the configuration files, i.e. Camera Calibration, Perspective Transformation, and Binary transformation , it is time to detect the lane.
 
