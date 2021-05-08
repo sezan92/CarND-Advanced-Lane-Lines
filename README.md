@@ -73,6 +73,9 @@ python src/lane_detection.py --input project_video.mp4 --camera_cfg_filename con
 
 It will save the output video as `project_video_output.avi` .
 
+### Notebook
+I have also written Notebook on this project. That is available [here](src/Project.ipynb)
+
 ## TODO:
 
 - [ ] Tune more to get better results
