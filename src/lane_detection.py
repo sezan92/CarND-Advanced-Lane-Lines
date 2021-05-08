@@ -56,7 +56,7 @@ def detect_lane_video(video_name, ld, transformers):
             )
         else:
             left_fitx, right_fitx, ploty, left_fit, right_fit = prior_search(
-                binary_frame, left_fit, right_fit, margin=150
+                binary_frame, left_fit, right_fit, margin=200
             )
         left_line.fit(left_fit)
         right_line.fit(right_fit)
@@ -96,12 +96,16 @@ def detect_lane_video(video_name, ld, transformers):
             cv2.LINE_AA,
         )
         out.write(frame_lane)
+        cv2.imshow("binary", binary_frame * 255)
+        cv2.imshow("lane", frame_lane)
+        cv2.waitKey(1)
         ret, frame = cap.read()
         if ret:
             binary_frame = preprocess_frame(frame, transformers)
 
     cap.release()
     out.release()
+    cv2.destroyAllWindows()
 
 
 def detect_lane_dir(img_dir, ld, transformers):
@@ -218,7 +222,7 @@ if __name__ == "__main__":
     pt.load_config(pt_cfg_filename)
     bt = BinaryTransformer()
     bt.load_config(bt_cfg_filename)
-    ld = LaneDetector()
+    ld = LaneDetector(nwindows=20, margin=60, minpix=50)
     transformers = [camera, pt, bt]
     if is_video(input_):
         detect_lane_video(input_, ld, transformers)
