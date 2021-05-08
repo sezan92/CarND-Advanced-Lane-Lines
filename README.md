@@ -74,7 +74,7 @@ It will save the output video as `project_video_output.avi` .
 
 ## TODO:
 
-- [] Tune more to get better results
-- [] Work on Challenge Videos
-- [] Make a Docker environment
-- [] Refactor
+-[] Tune more to get better results
+-[] Work on Challenge Videos
+-[] Make a Docker environment
+-[] Refactor
