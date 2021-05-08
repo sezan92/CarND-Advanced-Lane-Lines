@@ -107,7 +107,7 @@ def detect_lane_video(video_name, ld, transformers):
 def detect_lane_dir(img_dir, ld, transformers):
     imgs = load_img_from_dir(img_dir)
     output_dir = os.path.join(img_dir, "lane_detected")
-    output_dir = os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
     camera = transformers[0]
     pt = transformers[1]
     bt = transformers[2]
