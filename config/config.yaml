@@ -1,6 +1,0 @@
-s_thresh: !!python/tuple
-- 193.875
-- 250.875
-sobel_thresh: !!python/tuple
-- 220.625
-- 255.0
