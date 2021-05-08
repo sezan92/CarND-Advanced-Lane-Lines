@@ -30,15 +30,23 @@ if __name__ == "__main__":
         help="Perspective Transformation configuration file. Default: pt_config.yaml",
         default="pt_config.yaml",
     )
+    parser.add_argument(
+        "--img_size",
+        type=int,
+        nargs=2,
+        default=[720, 1280],
+        help="image shape. Default: (720, 1280)",
+    )
 
     args = parser.parse_args()
     img_dir = args.image_dir
     cfg_filename = args.cfg_filename
     camera_cfg_filename = args.camera_cfg_filename
     pt_cfg_filename = args.pt_cfg_filename
+    img_shape = tuple(args.img_size)
 
     camera = Camera()
-    pt = PerspectiveTransformer()
+    pt = PerspectiveTransformer(img_shape)
     bt = BinaryTransformer()
     camera.load_config(camera_cfg_filename)
     pt.load_config(pt_cfg_filename)
