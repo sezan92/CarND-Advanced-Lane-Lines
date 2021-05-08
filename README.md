@@ -79,3 +79,5 @@ It will save the output video as `project_video_output.avi` .
 - [ ] Work on Challenge Videos
 - [ ] Make a Docker environment
 - [ ] Refactor
+- [ ] Make a package
+- [ ] Refactor test scripts
